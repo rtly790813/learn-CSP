@@ -1,0 +1,82 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CSP - nonce</title>
+
+        <!--  其餘第三方套件或同源都可以使用 nonce 作為依據  -->
+        <script src="/js/index.js" nonce="<%= nonce %>"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"
+            nonce="<%= nonce %>"
+        ></script>
+
+        <!-- style-src 中帶上了 server 提供的 nonce 因此可以正常 render -->
+        <style nonce="<%= nonce %>">
+            body {
+                background-color: #f9d6d6;
+            }
+            img {
+                width: 300px;
+            }
+            button,
+            a {
+                border: 1px solid #000;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: #000;
+                text-decoration: none;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .next {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                line-height: 30px;
+            }
+            .text-red {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h4>script and style with nonce</h4>
+        <ul>
+            <li>nonce 允許具有 nonce attr 的 inline-style 及 inline-script 執行</li>
+            <li>
+                且 nonce 必須與 server 自動生成的值一致，當瀏覽器載入同時 CSP 針對標籤及 header
+                response 進行驗證。相同的 nonce 才能夠被執行
+            </li>
+            <li>
+                根據 CSP 建議，nonce 應該是要隨機且不可重複使用的: <br />
+                <span class="text-red">
+                    should use a cryptographically secure random token generator to generate a CSP
+                    nonce value. The random nonce value should only be used for a single HTTP
+                    request.
+                </span>
+            </li>
+            <li>Javascript 即便使用了 nonce 也無法執行 html 標籤上的 event 及 javascript:</li>
+        </ul>
+        <button onclick="alert('clicked!')" nonce="<%= nonce %>">Click me (clicked!)</button>
+        <button onclick="alert('not working')" nonce="<%= nonce %>">Click me (not working)</button>
+        <button id="test">Click me (Use addEventListener)</button>
+        <a href="javascript:alert('Hello World!')" nonce="<%= nonce %>">Link (Use javascript:)</a>
+        <script nonce="<%= nonce %>">
+            console.log("from lodash", _.isEmpty({}));
+
+            const buttonElement = document.getElementById("test");
+            buttonElement.addEventListener("click", () => {
+                alert("from <script> addEventListener");
+            });
+
+            console.log("from eval", eval("2 + 2"));
+        </script>
+
+        <a href="/csp-hash" class="next">Next Setting - Hash</a>
+    </body>
+</html>

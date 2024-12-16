@@ -1,0 +1,94 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CSP - Use Meta Setting</title>
+        <!-- 
+            透過 meta 標籤設定 Content Security Policy 
+            - 在瀏覽器發出 request 到 response 回來後，優先執行 header response 中的 CSP > 接著 html 載入後執行 meta 中的 CSP 
+
+            1. header response CSP => 排除 https://code.jquery.com
+            2. html meta CSP => 排除 https://cdn.jsdelivr.net/
+
+            所以最終的結果為兩個 domain 的資源皆不可被載入，由此可以判斷即便兩邊都設定，也不會是誰覆蓋誰，
+            而是兩邊都執行。
+        -->
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="script-src 'self' https://code.jquery.com"
+        />
+        <script src="/js/index.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"
+        ></script>
+
+        <!-- 僅設定 scirpt-src 因此 inline-style 仍然可以正常執行 -->
+        <style>
+            body {
+                background-color: #f9d6d6;
+            }
+            img {
+                width: 300px;
+            }
+            button,
+            a {
+                border: 1px solid #000;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: #000;
+                text-decoration: none;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .next {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                line-height: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <h4>Self + Domain vs 使用 Meta 設定 CSP</h4>
+        <!-- 僅設定 scirpt-src 因此不同 domain 的圖片資源仍可正常載入 -->
+        <img
+            src="https://images.pexels.com/photos/139764/pexels-photo-139764.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            alt=""
+        />
+
+        <p>JS:</p>
+        <ul>
+            <li>
+                - 在瀏覽器發出 request 到 response 回來後，優先執行 header response 中的 CSP > 接著
+                html 載入後執行 meta 中的 CSP <br />
+                1. header response CSP => 排除 https://code.jquery.com <br />
+                2. html meta CSP => 排除 https://cdn.jsdelivr.net/ 所以最終的結果為兩個 domain
+                的資源皆不可被載入，由此可以判斷即便兩邊都設定，也不會是誰覆蓋誰， 而是兩邊都執行。
+            </li>
+            <li>console 仍會有 CSP 相關 error 資訊</li>
+        </ul>
+        <button onclick="alert('clicked!')">Click me (Use Onclick)</button>
+        <button id="test">Click me (Use addEventListener)</button>
+        <a href="javascript:alert('Hello World!')">Link javascript</a>
+        <script>
+            console.log("from lodash", _.isEmpty({}));
+
+            const buttonElement = document.getElementById("test");
+            buttonElement.addEventListener("click", () => {
+                alert("from <script> addEventListener");
+            });
+
+            /* unsafe-inline 的特性是所有 inline-script 皆可執行，唯獨 eval 不行 */
+            console.log("from eval", eval("2 + 2"));
+        </script>
+
+        <a href="/csp-unsafe-inline" class="next">Next Setting - Unsafe-inline </a>
+    </body>
+</html>

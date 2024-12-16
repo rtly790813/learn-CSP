@@ -1,0 +1,81 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CSP - Self 設定</title>
+        <!-- script-src 開啟 self 之後除了，相同 domain 的 js 會被載入以外其餘皆會被阻擋 -->
+        <script src="/js/index.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+
+        <!-- 僅設定 scirpt-src 因此 inline-style 仍然可以正常執行 -->
+        <style>
+            body {
+                background-color: #f9d6d6;
+            }
+            img {
+                width: 300px;
+            }
+            button,
+            a {
+                border: 1px solid #000;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: #000;
+                text-decoration: none;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .next {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                line-height: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <h4>Self</h4>
+        <p>CSS:</p>
+        <ul>
+            <li>僅設定 scirpt-src 因此 inline-style 仍然可以正常執行</li>
+        </ul>
+
+        <p>Image:</p>
+        <ul>
+            <li>僅設定 scirpt-src 因此不同 domain 的圖片資源仍可正常載入</li>
+        </ul>
+        <img
+            src="https://images.pexels.com/photos/139764/pexels-photo-139764.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            alt=""
+        />
+
+        <p>JS:</p>
+        <ul>
+            <li>header response 僅設定 self，因此所有的 inline script 都不會執行</li>
+            <li>
+                script-src 開啟 self 之後除了，相同 domain 的 js 會被載入以外其餘皆會被阻擋<br />
+            </li>
+            <li>從 network 可以看到 loadsh 載入被阻擋及 console 會有 CSP 相關 error 資訊</li>
+        </ul>
+        <button onclick="alert('clicked!')">Click me (Use Onclick)</button>
+        <button id="test">Click me (Use addEventListener)</button>
+        <a href="javascript:alert('Hello World!')">Link javascript</a>
+        <script>
+            console.log("from lodash", _.isEmpty({}));
+
+            const buttonElement = document.getElementById("test");
+            buttonElement.addEventListener("click", () => {
+                alert("from <script> addEventListener");
+            });
+
+            /* unsafe-inline 的特性是所有 inline-script 皆可執行，唯獨 eval 不行 */
+            console.log("from eval", eval("2 + 2"));
+        </script>
+
+        <a href="/csp-domain" class="next">Next Setting - Domain</a>
+    </body>
+</html>

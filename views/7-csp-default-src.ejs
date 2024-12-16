@@ -1,0 +1,77 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CSP - Default Src</title>
+
+        <!-- Default Src 也包含了 script-src 但沒有指定 domain 因此只有同源的 js 可以被執行  -->
+        <script src="/js/index.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+
+        <!-- 僅設定 scirpt-src 因此 inline-style 仍然可以正常執行 -->
+        <style>
+            body {
+                background-color: #f9d6d6;
+            }
+            img {
+                width: 300px;
+            }
+            button,
+            a {
+                border: 1px solid #000;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: #000;
+                text-decoration: none;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .next {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                line-height: 30px;
+            }
+            .text-red {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h4>Default Src</h4>
+        <ul>
+            <li>
+                設定 default-src，表示會將尚未設定的 Fetch directive 都依據關鍵字做限制，設定了 self
+                即表示所有的資源僅接受相同 domain 的來源，並且阻擋掉 inline-style 及 inline-script
+            </li>
+        </ul>
+        <p>非同源的照片無法顯示：</p>
+        <img
+            src="https://images.pexels.com/photos/139764/pexels-photo-139764.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            alt=""
+        />
+        <p>同源的照片正常顯示：</p>
+        <img src="/imgs/origin.webp" alt="" />
+
+        <button onclick="alert('clicked!')">Click me (clicked!)</button>
+        <button onclick="alert('not working')">Click me (not working)</button>
+        <button id="test">Click me (Use addEventListener)</button>
+        <a href="javascript:alert('Hello World!')">Link (Use javascript:)</a>
+        <script>
+            console.log("from lodash", _.isEmpty({}));
+
+            const buttonElement = document.getElementById("test");
+            buttonElement.addEventListener("click", () => {
+                alert("from <script> addEventListener");
+            });
+
+            console.log("from eval", eval("2 + 2"));
+        </script>
+
+        <a href="/csp-img-src" class="next">Next Setting - img-src</a>
+    </body>
+</html>

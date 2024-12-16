@@ -1,0 +1,89 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CSP - Hash</title>
+
+        <!--  其餘第三方套件或同源都可以使用 hash 作為依據，且一定要添加 integrity & crossorigin  -->
+        <script src="/js/index.js"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"
+            integrity="sha384-H6KKS1H1WwuERMSm+54dYLzjg0fKqRK5ZRyASdbrI/lwrCc6bXEmtGYr5SwvP1pZ"
+            crossorigin="anonymous"
+        ></script>
+
+        <!-- style-src 中帶上了 server 提供的 nonce 因此可以正常 render -->
+        <style>
+            body {
+                background-color: #f9d6d6;
+            }
+            img {
+                width: 300px;
+            }
+            button,
+            a {
+                border: 1px solid #000;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: #000;
+                text-decoration: none;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .next {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                line-height: 30px;
+            }
+            .text-red {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h4>script and style with hash</h4>
+        <ul>
+            <li>
+                hash 是在 CSP 中指定特定的 Javascript 跟 CSS 產生的程式碼雜湊值，僅 inline-script 及
+                第三方套件可以使用，當 CSP 的雜湊值與 inline-script | inline-style
+                的內容相符，程式碼才會被執行
+            </li>
+            <li>
+                第三方套件必須搭配 integrity & crossorigin 屬性才可以使用，integrity
+                有些套件本身就有提供，有些則需要自行生成
+            </li>
+            <li>
+                在產生雜湊值的時候，要注意任何一個空白字元或斷行都會有影響，生成時只有少一個空白字元都會失敗
+            </li>
+            <li>
+                Javascript 即便在 CSP 加上了 sha256-* 也無法執行 html 標籤上的 event 及 javascript:
+            </li>
+        </ul>
+        <button onclick="alert('not working')">Click me (Hash)</button>
+        <a href="javascript:alert('Hello World!')">Link (Use javascript:)</a>
+
+        <!-- 有在 CSP 加上對應的 sha -->
+        <button id="test">Click me (Use addEventListener)</button>
+        <script>
+            console.log(_.head([1, 2, 3]));
+            const buttonElement = document.getElementById("test");
+            buttonElement.addEventListener("click", () => {
+                alert("from <script> addEventListener");
+            });
+
+            console.log("from eval", eval("2 + 2"));
+        </script>
+
+        <!-- 沒有在 CSP 加上對應的 sha -->
+        <script>
+            console.log("sec");
+        </script>
+
+        <a href="/csp-strict-dynamic" class="next">Next Setting - strict dynamic</a>
+    </body>
+</html>

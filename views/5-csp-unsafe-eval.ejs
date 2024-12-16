@@ -1,0 +1,79 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CSP - Unsafe Eval</title>
+
+        <!--  加上特定 Domain 之後，就可以載入該 Domain 資源  -->
+        <script src="/js/index.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+
+        <!-- 僅設定 scirpt-src 因此 inline-style 仍然可以正常執行 -->
+        <style>
+            body {
+                background-color: #f9d6d6;
+            }
+            img {
+                width: 300px;
+            }
+            button,
+            a {
+                border: 1px solid #000;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: #000;
+                text-decoration: none;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .next {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                line-height: 30px;
+            }
+            .text-red {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h4>Self + Unsafe Inline + Unsafe Eval</h4>
+        <!-- 僅設定 scirpt-src 因此不同 domain 的圖片資源仍可正常載入 -->
+        <img
+            src="https://images.pexels.com/photos/139764/pexels-photo-139764.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            alt=""
+        />
+
+        <p>JS:</p>
+        <ul>
+            <li>
+                header response 加上了 'unsafe-inline' + 'unsafe-eval' 相關的 inline-script 可以執行
+            </li>
+            <li>且能夠執行 eval()、javascript:</li>
+            <li>可以被執行的有 onClick, onMouseover ...etc event、script</li>
+            <li class="text-red">
+                !!! 如果僅放 unsafe-eval 不放 inline 任何 inline-script 仍然無法執行
+            </li>
+        </ul>
+        <button onclick="alert('clicked!')">Click me (Use Onclick)</button>
+        <button id="test">Click me (Use addEventListener)</button>
+        <a href="javascript:alert('Hello World!')">Link (Use javascript:)</a>
+        <script>
+            console.log("from lodash", _.isEmpty({}));
+
+            const buttonElement = document.getElementById("test");
+            buttonElement.addEventListener("click", () => {
+                alert("from <script> addEventListener");
+            });
+
+            console.log("from eval", eval("2 + 2"));
+        </script>
+
+        <a href="/csp-unsafe-hashes" class="next">Next Setting - unsafe-hashes</a>
+    </body>
+</html>

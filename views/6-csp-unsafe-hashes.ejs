@@ -1,0 +1,86 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CSP - Unsafe Hashes</title>
+
+        <!--  加上特定 Domain 之後，就可以載入該 Domain 資源  -->
+        <script src="/js/index.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+
+        <!-- 僅設定 scirpt-src 因此 inline-style 仍然可以正常執行 -->
+        <style>
+            body {
+                background-color: #f9d6d6;
+            }
+            img {
+                width: 300px;
+            }
+            button,
+            a {
+                border: 1px solid #000;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: #000;
+                text-decoration: none;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .next {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                line-height: 30px;
+            }
+            .text-red {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h4>Self + Unsafe Hashes</h4>
+        <!-- 僅設定 scirpt-src 因此不同 domain 的圖片資源仍可正常載入 -->
+        <img
+            src="https://images.pexels.com/photos/139764/pexels-photo-139764.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            alt=""
+        />
+
+        <p>JS:</p>
+        <ul>
+            <li>
+                說明：header response 加上了 'unsafe-hashes'，會限制可以執行的 inline script 或
+                inline style， 並且僅限與指定的 hash 匹配才可以執行，其餘的 inline script | style
+                皆不可執行
+            </li>
+            <li>
+                測試：在 server 指定能夠執行的 script 僅 `alert('clicked!')`，並透過此 script 生成
+                sha-* 放置在 CSP 中， 接著在 html 中測試，除了 clicked!
+                按鈕可以被執行以外，其餘皆沒有任何作用
+            </li>
+            <li>
+                這個的使用方式麻煩的點在於，每當 inline script 中的內容有異動，CSP
+                就也需要跟著更新。 若是其他開發者不曉得就會導致 script 失效，卻不知道發生了什麼事
+            </li>
+        </ul>
+        <button onclick="alert('clicked!')">Click me (clicked!)</button>
+        <button onclick="alert('not working')">Click me (not working)</button>
+        <button id="test">Click me (Use addEventListener)</button>
+        <a href="javascript:alert('Hello World!')">Link (Use javascript:)</a>
+        <script>
+            console.log("from lodash", _.isEmpty({}));
+
+            const buttonElement = document.getElementById("test");
+            buttonElement.addEventListener("click", () => {
+                alert("from <script> addEventListener");
+            });
+
+            console.log("from eval", eval("2 + 2"));
+        </script>
+
+        <a href="/csp-default-src" class="next">Next Setting - Default src</a>
+    </body>
+</html>
