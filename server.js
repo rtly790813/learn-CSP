@@ -19,46 +19,50 @@ app.use(express.static(path.join(__dirname, "public")));
 //     next();
 // });
 
-// 1 設定了 self 之後所有 inline sciprt 都會被阻擋
+// 1-csp-self
 app.get("/csp-self", (req, res) => {
+    // script-src 'self' 表示只允許來自本站的 script 執行，之後所有 inline sciprt 都會被阻擋
     res.header("Content-Security-Policy", "script-src 'self'");
 
     // 渲染 views/csp.ejs 頁面
     res.render("1-csp-self");
 });
 
-// 2 加上特定 Domain 之後，就可以載入該 Domain 資源
+// 2-csp-domain
 app.get("/csp-domain", (req, res) => {
+    // 加上特定 Domain 之後，就可以載入該 Domain 資源
     res.header("Content-Security-Policy", "script-src 'self' https://cdn.jsdelivr.net");
 
     // 渲染 views/csp.ejs 頁面
     res.render("2-csp-domain");
 });
 
-// 3 與 meta 同時啟用 CSP，但指定不同 domain 進行測試
+// 3-csp-with-meta
 app.get("/csp-with-meta", (req, res) => {
+    // 與 html 中 meta 同時啟用 CSP，但指定不同 domain 進行測試
     res.header("Content-Security-Policy", "script-src 'self' https://cdn.jsdelivr.net");
 
     // 渲染 views/csp.ejs 頁面
     res.render("3-csp-with-meta");
 });
 
-// 4 unsafe-inline 增加了之後，inline-script 就可以開始執行了
+// 4-csp-unsafe-inline
 app.get("/csp-unsafe-inline", (req, res) => {
+    // 增加了之後，inline-script 就可以開始執行了
     res.header(
         "Content-Security-Policy",
-        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net "
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;"
     );
 
     // 渲染 views/csp.ejs 頁面
     res.render("4-csp-unsafe-inline");
 });
 
-// 5 unsafe-eval 增加了之後就可以執行 eval()
+// 5-csp-unsafe-eval 增加了之後就可以執行 eval()
 app.get("/csp-unsafe-eval", (req, res) => {
     res.header(
         "Content-Security-Policy",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'  https://cdn.jsdelivr.net "
     );
 
     // 渲染 views/csp.ejs 頁面

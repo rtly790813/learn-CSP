@@ -57,6 +57,7 @@
     </head>
     <body>
         <h4>Self + Domain vs 使用 Meta 設定 CSP</h4>
+
         <!-- 僅設定 scirpt-src 因此不同 domain 的圖片資源仍可正常載入 -->
         <img
             src="https://images.pexels.com/photos/139764/pexels-photo-139764.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
@@ -66,13 +67,13 @@
         <p>JS:</p>
         <ul>
             <li>
-                - 在瀏覽器發出 request 到 response 回來後，優先執行 header response 中的 CSP > 接著
+                在瀏覽器發出 request 到 response 回來後，優先執行 header response 中的 CSP > 接著
                 html 載入後執行 meta 中的 CSP <br />
                 1. header response CSP => 排除 https://code.jquery.com <br />
-                2. html meta CSP => 排除 https://cdn.jsdelivr.net/ 所以最終的結果為兩個 domain
+                2. html meta CSP => 排除 https://cdn.jsdelivr.net/ <br />
+                所以最終的結果為兩個 domain
                 的資源皆不可被載入，由此可以判斷即便兩邊都設定，也不會是誰覆蓋誰， 而是兩邊都執行。
             </li>
-            <li>console 仍會有 CSP 相關 error 資訊</li>
         </ul>
         <button onclick="alert('clicked!')">Click me (Use Onclick)</button>
         <button id="test">Click me (Use addEventListener)</button>
@@ -85,7 +86,6 @@
                 alert("from <script> addEventListener");
             });
 
-            /* unsafe-inline 的特性是所有 inline-script 皆可執行，唯獨 eval 不行 */
             console.log("from eval", eval("2 + 2"));
         </script>
 

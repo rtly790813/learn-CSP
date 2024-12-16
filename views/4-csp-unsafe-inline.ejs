@@ -53,17 +53,24 @@
             <li>不可以被執行的有 eval()</li>
             <li>
                 但 unsafe 顧名思義就是不安全的意思，畢竟這些就能夠允許 inline-script 跟 inline-style
-                執行，畢竟瀏覽器也無法判斷到底是合法還是XXS 所植入的 script，因此 w3c
-                也不建議使用這些關鍵字。 <br />W3C:
-                https://www.w3.org/TR/2024/WD-CSP3-20241014/#csp-directives > In either case,
-                developers SHOULD NOT include either 'unsafe-inline', or data: as valid sources in
-                their policies. Both enable XSS attacks by allowing code to be included directly in
-                the document itself; they are best avoided completely.
+                執行，畢竟瀏覽器也無法判斷到底是合法還是XXS 所植入的 script，因此 w3c 及官方
+                都不建議使用這些關鍵字。 <br />
+
+                https://content-security-policy.com/unsafe-inline/ > Except for one very specific
+                case, you should avoid using the unsafe-inline keyword in your CSP policy.
+            </li>
+            <li>
+                何時可以使用 unsafe-inline ? 當搭配 strict-dynamic 關鍵字時，支援 strict-dynamic
+                的瀏覽器會自動忽略 unsafe-inline
             </li>
         </ul>
         <button onclick="alert('clicked!')">Click me (Use Onclick)</button>
         <button id="test">Click me (Use addEventListener)</button>
         <a href="javascript:alert('Hello World!')">Link (Use javascript:)</a>
+
+        <p>XXS:</p>
+        <button id="xxs">XXS</button>
+        <p id="inject"></p>
         <script>
             console.log("from lodash", _.isEmpty({}));
 
@@ -72,10 +79,19 @@
                 alert("from <script> addEventListener");
             });
 
+            // http://localhost:3000/csp-unsafe-inline?query=%3Ca%20href=%22javascript:alert(%27Hello%20World!%27)%22%3ELink%20(Use%20javascript:)%3C/a%3E
+            const xxsButtonElement = document.getElementById("xxs");
+            xxsButtonElement.addEventListener("click", () => {
+                const url = new URL(window.location.href);
+                const queryParams = new URLSearchParams(url.search);
+
+                const injectEl = document.getElementById("inject");
+                injectEl.innerHTML = queryParams.get("query");
+            });
+
             setTimeout(() => {
                 console.log("setTimeout");
             }, 500);
-
             /* unsafe-inline 的特性是所有 inline-script 皆可執行，唯獨 eval 不行 */
             console.log("from eval", eval("2 + 2"));
         </script>
