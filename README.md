@@ -6,6 +6,11 @@
 node server
 ```
 
+## 測試
+
+server.js 中的 1,2,3 ...etc 都會對應到 views folder 中的 1-xxx, 2-xxx, 3-xxx 頁面
+可以依據對應的 route 測試看看不同設定的效果
+
 ## 參考資源
 
 https://content-security-policy.com/
