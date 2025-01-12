@@ -31,7 +31,10 @@ app.get("/csp-self", (req, res) => {
 // 2-csp-domain
 app.get("/csp-domain", (req, res) => {
     // 加上特定 Domain 之後，就可以載入該 Domain 資源
-    res.header("Content-Security-Policy", "script-src 'self' https://cdn.jsdelivr.net");
+    res.header(
+        "Content-Security-Policy",
+        "script-src 'self' https://cdn.jsdelivr.net; base-uri 'self'"
+    );
 
     // 渲染 views/csp.ejs 頁面
     res.render("2-csp-domain");
