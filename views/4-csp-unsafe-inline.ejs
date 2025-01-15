@@ -59,10 +59,6 @@
                 https://content-security-policy.com/unsafe-inline/ > Except for one very specific
                 case, you should avoid using the unsafe-inline keyword in your CSP policy.
             </li>
-            <li>
-                何時可以使用 unsafe-inline ? 當搭配 strict-dynamic 關鍵字時，支援 strict-dynamic
-                的瀏覽器會自動忽略 unsafe-inline
-            </li>
         </ul>
         <button onclick="alert('clicked!')">Click me (Use Onclick)</button>
         <button id="test">Click me (Use addEventListener)</button>
@@ -88,8 +84,7 @@
                 const injectEl = document.getElementById("inject");
                 injectEl.innerHTML = queryParams.get("query");
             });
-
-            setTimeout(() => {
+            +setTimeout(() => {
                 console.log("setTimeout");
             }, 500);
             /* unsafe-inline 的特性是所有 inline-script 皆可執行，唯獨 eval 不行 */

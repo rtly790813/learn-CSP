@@ -31,10 +31,7 @@ app.get("/csp-self", (req, res) => {
 // 2-csp-domain
 app.get("/csp-domain", (req, res) => {
     // 加上特定 Domain 之後，就可以載入該 Domain 資源
-    res.header(
-        "Content-Security-Policy",
-        "script-src 'self' https://cdn.jsdelivr.net; base-uri 'self'"
-    );
+    res.header("Content-Security-Policy", "script-src 'self' https://cdn.jsdelivr.net;");
 
     // 渲染 views/csp.ejs 頁面
     res.render("2-csp-domain");
@@ -63,10 +60,7 @@ app.get("/csp-unsafe-inline", (req, res) => {
 
 // 5-csp-unsafe-eval 增加了之後就可以執行 eval()
 app.get("/csp-unsafe-eval", (req, res) => {
-    res.header(
-        "Content-Security-Policy",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'  https://cdn.jsdelivr.net "
-    );
+    res.header("Content-Security-Policy", "script-src 'self'   https://cdn.jsdelivr.net ");
 
     // 渲染 views/csp.ejs 頁面
     res.render("5-csp-unsafe-eval");
@@ -77,7 +71,7 @@ app.get("/csp-unsafe-hashes", (req, res) => {
     // 定義內聯的 onclick 事件處理器
     const inlineEventHandler = "alert('clicked!')";
 
-    // 使用 SHA-256 算法生成哈希值
+    // 使用 SHA-256 算法生成哈希值, 亦可設定 384, 512
     const hash = crypto.createHash("sha256").update(inlineEventHandler).digest("base64");
     const hashDirective = `'sha256-${hash}'`;
 

